@@ -50,16 +50,16 @@ title_list_words=title_text.split()
 
 title_model = load_model('models/titles.h5')
 
-def generate_comments():
+def generate_comments(length):
     start_index = random.randint(0, len(comment_list_words) - maxlen - 1)
 
-    diversity = 0.5
+    diversity = 0.8
     sentence = comment_list_words[start_index: start_index + maxlen]
     generated = ' '.join(sentence)
 
     comments = []
     str = ''
-    for i in range(100):
+    for i in range(length):
         x = np.zeros((1, maxlen, len(comment_words)))
         for t, word in enumerate(sentence):
             x[0, t, comment_word_indices[word]] = 1.
@@ -74,13 +74,13 @@ def generate_comments():
             str = ''
         else:
             str += ' '
-            str += next_word.upper()
+            str += next_word
     return comments
 
 def generate_title():
     start_index = random.randint(0, len(title_list_words) - maxlen - 1)
 
-    diversity = 0.5
+    diversity = 1.2
     sentence = title_list_words[start_index: start_index + maxlen]
     generated = ' '.join(sentence)
 
@@ -100,7 +100,7 @@ def generate_title():
                 break
         else:
             str += ' '
-            str += next_word.upper()
+            str += next_word
     if len(str) >= 300:
         str = str[0:300]
     return str
@@ -111,6 +111,13 @@ reddit = praw.Reddit(client_id=config.client_id,
                      username=config.username,
                      password=config.password)
 
+def post_comment_chain(submission, comment_chain):
+    if len(comment_chain[0]) > 0:
+        comment = submission.reply(comment_chain[0])
+        if len(comment_chain) > 1:
+            for comment_str in comment_chain[1:]:
+                comment = comment.reply(comment_str)
+
 def get_random_submission():
     id = reddit.subreddit('totallynotrobots').random()
     submission = praw.models.Submission(reddit, id)
@@ -119,9 +126,13 @@ def get_random_submission():
 def post_to_reddit():
     print(reddit.user.me())
     submission = reddit.subreddit('totally_humans').submit(title=generate_title(), url=get_random_submission())
-    comment_chain = generate_comments()
-    comment = submission.reply(comment_chain[0])
-    for comment_str in comment_chain[1:]:
-        comment = comment.reply(comment_str)
+    comment_chain_count = random.randint(1, 5)
+    print('comment_chain_count', comment_chain_count)
+    for i in range(comment_chain_count):
+        length = random.randint(5, 80)
+        print('length', length)
+        comment_chain = generate_comments(length)
+        if len(comment_chain) > 0:
+            post_comment_chain(submission, comment_chain)
 
 post_to_reddit()
