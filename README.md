@@ -21,6 +21,7 @@ username=''
 password=''
 ```
 
+## train & run
 ### scrape data `extract_data.py`
 PRAW can only scrape a max of 1000 of the most recent posts. this script iterates through all the titles & comments of each post and all data will be saved to `data` dir
 
