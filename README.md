@@ -21,10 +21,10 @@ username=''
 password=''
 ```
 
-## scrape data `extract_data.py`
+### scrape data `extract_data.py`
 PRAW can only scrape a max of 1000 of the most recent posts. this script iterates through all the titles & comments of each post and all data will be saved to `data` dir
 
-## train `rnn.py`
+### train `rnn.py`
 just update the `name` variable in `rnn.py` before running to the name of your dataset (i.e. either 'comments' or 'titles')
 
-## predict & post `post.py`
+### predict & post `post.py`
