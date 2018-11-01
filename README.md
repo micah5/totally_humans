@@ -21,7 +21,7 @@ password=''
 ```
 
 ## scrape data
-PRAW only scrapes the most recent 1000 posts (and their respective comments). data will be saved to `data` dir
+PRAW can only scrape a max of 1000 of the most recent posts. this script iterates through all the titles & comments of each post and all data will be saved to `data` dir
 ```python
 python extract_data.py
 ```
